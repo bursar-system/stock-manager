@@ -52,7 +52,9 @@ export default function Login({ onLoggedIn, onAdminLoggedIn }) {
       await prepareDeviceFor(user.id)
 
       // Super admin? Open the admin panel instead of a shop
-            const { data: isAdmin, error: adminErr } = await supabase.rpc('is_super_admin')
+      // Start the shop lookup at the same time as the admin check
+      const profilePromise = supabase.from('profiles').select('shop_id').eq('id', user.id).single()
+      const { data: isAdmin, error: adminErr } = await supabase.rpc('is_super_admin')
       if (adminErr) throw new Error('Admin check failed: ' + adminErr.message)
       if (isAdmin === true) {
         
@@ -61,8 +63,7 @@ export default function Login({ onLoggedIn, onAdminLoggedIn }) {
         return
       }
 
-      const { data: profile, error: pErr } = await supabase
-        .from('profiles').select('shop_id').eq('id', user.id).single()
+      const { data: profile, error: pErr } = await profilePromise
       if (pErr || !profile?.shop_id) throw new Error('Could not load your shop. Try again.')
 
 
