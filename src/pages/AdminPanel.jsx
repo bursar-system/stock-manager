@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { wipeLocalData } from '../lib/session'
+import ThemeToggle from '../components/ThemeToggle'
 import { listShops, updateShop } from '../services/adminService'
 import { money, dateTime, dayKey } from '../utils/formatters'
 
@@ -130,7 +131,10 @@ export default function AdminPanel({ onLogout }) {
     <>
       <header className="app-header">
         <h1>Stock Manager · Admin</h1>
-        <button className="small" style={{ background: 'rgba(255,255,255,.2)' }} onClick={logout}>Logout</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <ThemeToggle />
+          <button className="small" style={{ background: 'rgba(255,255,255,.2)' }} onClick={logout}>Logout</button>
+        </div>
       </header>
 
       <div className="page" style={{ paddingBottom: 30 }}>

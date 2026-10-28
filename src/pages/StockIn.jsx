@@ -99,7 +99,7 @@ export default function StockIn() {
           <>
             <p className="muted">Now in stock: <b>{qtyUnit(product.quantity, product.unit)}</b></p>
             {(product.batches.length > 0 || product.unbatched > 0) && (
-              <div style={{ background: '#f9fafb', borderRadius: 10, padding: '4px 12px', marginBottom: 6 }}>
+              <div style={{ background: 'var(--soft)', borderRadius: 10, padding: '4px 12px', marginBottom: 6 }}>
                 {product.batches.map((b) => (
                   <div className="item" key={b.id}>
                     <div className="sub" style={{ margin: 0 }}>{batchLabel(b, product.unit)}</div>

@@ -5,6 +5,7 @@ import { db } from '../lib/db'
 import { syncNow } from '../sync/syncEngine'
 import SyncStatus from './SyncStatus'
 import InstallButton from './InstallButton'
+import ThemeToggle from './ThemeToggle'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { daysUntil } from '../utils/calculations'
 import { SUPPORT_PHONE } from '../lib/config'
@@ -44,6 +45,7 @@ export default function Layout({ onLogout }) {
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <InstallButton />
           <SyncStatus />
+          <ThemeToggle />
           <button className="small" style={{ background: 'rgba(255,255,255,.2)' }} onClick={logout}>
             Logout
           </button>

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { setContext, prepareDeviceFor } from '../lib/session'
 import { syncNow } from '../sync/syncEngine'
 import InstallButton from '../components/InstallButton'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function Login({ onLoggedIn, onAdminLoggedIn }) {
   const [mode, setMode] = useState('login')
@@ -78,7 +79,10 @@ export default function Login({ onLoggedIn, onAdminLoggedIn }) {
   return (
     <div className="login">
       <h2 className="center">📦 Stock Manager</h2>
-      <div className="center" style={{ marginBottom: 10 }}><InstallButton /></div>
+      <div className="center" style={{ marginBottom: 10, display: 'flex', gap: 8, justifyContent: 'center' }}>
+        <InstallButton />
+        <ThemeToggle />
+      </div>
             <form className="card" onSubmit={submit} autoComplete="off">
         <div className="tabs">
           <button type="button" className={mode === 'login' ? 'on' : ''} onClick={() => setMode('login')}>Log in</button>

@@ -81,3 +81,41 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .center { text-align: center; }
 .login { max-width: 380px; margin: 40px auto; padding: 0 16px; }
 .total { font-size: 22px; font-weight: 800; text-align: right; margin-top: 10px; }
+/* ---------- Dark mode ---------- */
+:root { --soft: #f9fafb; color-scheme: light; }
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1419;
+  --card: #1a2028;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --line: #2d3640;
+  --soft: #222a33;
+}
+
+[data-theme="dark"] .app-header { background: #0b3b37; }
+[data-theme="dark"] .bottom-nav { background: var(--card); }
+[data-theme="dark"] .bottom-nav a.active { color: #2dd4bf; }
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea { background: #121820; border-color: #374151; }
+
+[data-theme="dark"] button.secondary { background: #2d3640; color: var(--text); }
+[data-theme="dark"] .tabs button { background: #2d3640; color: var(--text); }
+[data-theme="dark"] .tabs button.on { background: var(--brand); color: #fff; }
+
+[data-theme="dark"] .badge.ok { background: #14532d; color: #bbf7d0; }
+[data-theme="dark"] .badge.low { background: #78350f; color: #fde68a; }
+[data-theme="dark"] .badge.out { background: #7f1d1d; color: #fecaca; }
+
+[data-theme="dark"] .alert.red { background: #4c1d1d; color: #fecaca; }
+[data-theme="dark"] .alert.amber { background: #4a3510; color: #fde68a; }
+[data-theme="dark"] .alert.blue { background: #172554; color: #bfdbfe; }
+
+[data-theme="dark"] .msg.ok { background: #14532d; color: #bbf7d0; }
+[data-theme="dark"] .msg.err { background: #7f1d1d; color: #fecaca; }
+
+[data-theme="dark"] .plus { color: #4ade80; }
+[data-theme="dark"] .minus { color: #f87171; }
