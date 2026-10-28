@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useProducts } from './useProducts'
 import { daysUntil } from '../utils/calculations'
+import { EXPIRY_WARN_DAYS } from '../lib/config'
 
 const DAY = 86400000
 
@@ -26,7 +27,7 @@ export function useStockAlerts() {
       for (const b of p.batches) {
         if (!b.expiry_date) continue
         const days = daysUntil(b.expiry_date)
-        if (days <= 14) {
+        if (days <= EXPIRY_WARN_DAYS) {
           expiring.push({
             id: b.id, name: p.name, unit: p.unit, remaining: b.remaining,
             expiry_date: b.expiry_date, days, when: whenText(days),
@@ -35,6 +36,8 @@ export function useStockAlerts() {
       }
     }
     expiring.sort((a, b) => a.days - b.days)
+    const expiredBatches = expiring.filter((b) => b.days < 0)
+    const expiringSoon = expiring.filter((b) => b.days >= 0)
 
     const fastMovers = products
       .filter((p) => p.sold30d > 0)
@@ -49,6 +52,6 @@ export function useStockAlerts() {
     const stockValue = products.reduce(
       (s, p) => s + Math.max(p.quantity, 0) * Number(p.buying_price), 0
     )
-    return { loading, products, outOfStock, lowStock, runningOut, expiring, fastMovers, slowMovers, stockValue }
+    return { loading, products, outOfStock, lowStock, runningOut, expiring, expiredBatches, expiringSoon, fastMovers, slowMovers, stockValue }
   }, [products, loading])
 }

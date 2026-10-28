@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useProducts } from '../hooks/useProducts'
 import { createSale } from '../services/salesService'
 import { money, qty, qtyUnit } from '../utils/formatters'
+import { daysUntil } from '../utils/calculations'
 
 export default function NewSale() {
   const { products } = useProducts()
@@ -52,7 +53,17 @@ export default function NewSale() {
         <div className="card" style={{ marginTop: 8 }}>
           {found.map((p) => (
             <div className="item" key={p.id} onClick={() => add(p)} style={{ cursor: 'pointer' }}>
-              <div><div className="name">{p.name}</div><div className="sub">{money(p.selling_price)}</div></div>
+              <div><div className="name">{p.name}</div><div className="sub">{money(p.selling_price)}</div>
+{(() => {
+  const b = p.batches.find((x) => x.expiry_date && daysUntil(x.expiry_date) <= 7)
+  if (!b) return null
+  const d = daysUntil(b.expiry_date)
+  return (
+    <div className="sub" style={{ color: d < 0 ? 'var(--red)' : 'var(--amber)', fontWeight: 600 }}>
+      ⚠ {qtyUnit(b.remaining, p.unit)} {d < 0 ? 'EXPIRED' : d === 0 ? 'expires today' : `expire in ${d} day(s)`}
+    </div>
+  )
+})()}</div>
               <span className={`badge ${p.status}`}>{qtyUnit(p.quantity, p.unit)}</span>
             </div>
           ))}

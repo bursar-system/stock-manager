@@ -4,7 +4,7 @@ import { useStockAlerts } from '../hooks/useStockAlerts'
 import { Link } from 'react-router-dom'
 import AlertBanner from '../components/AlertBanner'
 import { loadCreditGroups } from '../services/paymentService'
-import { money, qtyUnit, qty, startOfDay } from '../utils/formatters'
+import { money, qtyUnit, qty, startOfDay, expiryText } from '../utils/formatters'
 
 export default function Dashboard() {
   const a = useStockAlerts()
@@ -53,10 +53,15 @@ export default function Dashboard() {
         items={a.lowStock.map((p) => label(p, `${qtyUnit(p.quantity, p.unit)} left`))} />
       <AlertBanner tone="amber" title="Will run out within a week"
         items={a.runningOut.map((p) => label(p, `about ${Math.max(1, Math.round(p.daysLeft))} day(s) left`))} />
-      <AlertBanner tone="red" title="Expiring soon or expired"
-        items={a.expiring.map((b) => ({
+      <AlertBanner tone="red" title="EXPIRED: remove from shelf" max={20}
+        items={a.expiredBatches.map((b) => ({
           id: b.id,
-          label: `${b.name}: ${qtyUnit(b.remaining, b.unit)} ${b.when}`,
+          label: `${b.name}: ${qtyUnit(b.remaining, b.unit)} ${b.when} (${expiryText(b.expiry_date)})`,
+        }))} />
+      <AlertBanner tone="amber" title="Expiring soon" max={20}
+        items={a.expiringSoon.map((b) => ({
+          id: b.id,
+          label: `${b.name}: ${qtyUnit(b.remaining, b.unit)} ${b.when} (${expiryText(b.expiry_date)})`,
         }))} />
 
       {a.fastMovers.length > 0 && (
