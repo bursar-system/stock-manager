@@ -119,3 +119,4 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 
 [data-theme="dark"] .plus { color: #4ade80; }
 [data-theme="dark"] .minus { color: #f87171; }
+.bottom-nav a { font-size: 11px; padding: 10px 0; }

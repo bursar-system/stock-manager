@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { loadCreditGroups, recordPayment } from '../services/paymentService'
+import { loadCreditGroups, recordPayment, payCustomer } from '../services/paymentService'
 import { money, dateTime } from '../utils/formatters'
 
 function SaleRow({ s }) {
@@ -56,6 +56,56 @@ function SaleRow({ s }) {
   )
 }
 
+function CustomerPay({ g }) {
+  const [open, setOpen] = useState(false)
+  const [amount, setAmount] = useState(g.total)
+  const [method, setMethod] = useState('cash')
+  const [err, setErr] = useState('')
+
+  async function pay() {
+    setErr('')
+    try {
+      await payCustomer({ sales: g.sales, amount, method })
+      setOpen(false)
+    } catch (e) {
+      setErr(e.message)
+    }
+  }
+
+  if (!open) {
+    return (
+      <button className="full" style={{ marginTop: 4 }}
+        onClick={() => { setAmount(g.total); setOpen(true) }}>
+        Customer paid
+      </button>
+    )
+  }
+
+  return (
+    <div>
+      <div className="row">
+        <div>
+          <label>Amount received (of {money(g.total)})</label>
+          <input type="number" inputMode="decimal" step="any" min="0" value={amount}
+            onChange={(e) => setAmount(e.target.value)} />
+        </div>
+        <div>
+          <label>Paid by</label>
+          <select value={method} onChange={(e) => setMethod(e.target.value)}>
+            <option value="cash">Cash</option>
+            <option value="mpesa">M-Pesa</option>
+          </select>
+        </div>
+      </div>
+      {err && <div className="msg err">{err}</div>}
+      <div className="row" style={{ marginTop: 10 }}>
+        <button className="secondary" onClick={() => setOpen(false)}>Cancel</button>
+        <button onClick={pay}>Save payment</button>
+      </div>
+    </div>
+  )
+}
+
 export default function Credit() {
   const groups = useLiveQuery(loadCreditGroups, [], null)
   if (!groups) return <div className="page muted">Loading...</div>
@@ -78,6 +128,7 @@ export default function Credit() {
             <div className="name">{g.name}</div>
             <span className="badge low">{money(g.total)}</span>
           </div>
+          <CustomerPay g={g} />
           {g.sales.map((s) => <SaleRow key={`${s.id}-${s.balance}`} s={s} />)}
         </div>
       ))}

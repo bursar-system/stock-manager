@@ -13,6 +13,7 @@ import { SUPPORT_PHONE } from '../lib/config'
 const links = [
   { to: '/', label: 'Home', icon: '🏠' },
   { to: '/sell', label: 'Sell', icon: '🛒' },
+  { to: '/credit', label: 'Debts', icon: '💳' },
   { to: '/stock', label: 'Stock', icon: '📦' },
   { to: '/products', label: 'Items', icon: '🏷️' },
   { to: '/movement', label: 'Moves', icon: '📈' },

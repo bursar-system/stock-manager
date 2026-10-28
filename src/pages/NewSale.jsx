@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '../lib/db'
 import { useProducts } from '../hooks/useProducts'
 import { createSale } from '../services/salesService'
 import { money, qty, qtyUnit } from '../utils/formatters'
@@ -6,6 +8,10 @@ import { daysUntil } from '../utils/calculations'
 
 export default function NewSale() {
   const { products } = useProducts()
+  const pastCustomers = useLiveQuery(async () => {
+    const all = await db.sales.toArray()
+    return [...new Set(all.filter((s) => s.customer_name).map((s) => s.customer_name.trim()))]
+  }, [], [])
   const [search, setSearch] = useState('')
   const [cart, setCart] = useState([]) // { product, quantity, unit_price }
   const [method, setMethod] = useState('cash')
@@ -113,7 +119,10 @@ export default function NewSale() {
           {method === 'credit' && (
             <>
 <label>Customer name (required for credit)</label>
-              <input value={customer} onChange={(e) => setCustomer(e.target.value)} />
+<input list="customers" value={customer} onChange={(e) => setCustomer(e.target.value)} />
+<datalist id="customers">
+  {pastCustomers.map((n) => <option key={n} value={n} />)}
+</datalist>
             </>
           )}
           <button className="full" onClick={complete}>Complete sale</button>

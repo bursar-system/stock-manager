@@ -1,4 +1,4 @@
-import { db, newId, saveRecord } from '../lib/db'
+import { db, newId, saveRecord, saveMany } from '../lib/db'
 import { getContext } from '../lib/session'
 
 const r2 = (n) => Math.round(n * 100) / 100
@@ -57,4 +57,30 @@ export async function recordPayment({ sale_id, amount, method, note }) {
     created_at: new Date().toISOString(),
     deleted_at: null,
   })
+}
+// A customer pays one amount. It clears their oldest debts first.
+// sales = the group's sales, oldest first (each has .balance)
+export async function payCustomer({ sales, amount, method }) {
+  let left = Number(amount)
+  if (!(left > 0)) throw new Error('Enter an amount greater than 0')
+  const total = r2(sales.reduce((t, s) => t + s.balance, 0))
+  if (left > total + 0.001) throw new Error(`This customer only owes ${total}`)
+
+  const ctx = await getContext()
+  const now = new Date().toISOString()
+  const entries = []
+  for (const s of sales) {
+    if (left <= 0) break
+    const part = r2(Math.min(left, s.balance))
+    entries.push({
+      table: 'credit_payments',
+      record: {
+        id: newId(), shop_id: ctx.shop_id, sale_id: s.id, amount: part,
+        method: method || 'cash', note: 'Customer payment',
+        created_by: ctx.user_id, created_at: now, deleted_at: null,
+      },
+    })
+    left = r2(left - part)
+  }
+  await saveMany(entries) // all saved together or not at all
 }
