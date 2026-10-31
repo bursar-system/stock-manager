@@ -38,7 +38,16 @@ function ShopCard({ shop, onChanged }) {
     setBusy(true)
     setErr('')
     try {
-      await updateShop(shop.shop_id, { status, paid_until: paid, notes })
+      // Activating a shop whose paid-until date already passed would leave it blocked,
+      // so give it 30 more days
+      let paidUntil = paid
+      if (status === 'active' && paidUntil && paidUntil < dayKey(new Date())) {
+        const d = new Date()
+        d.setDate(d.getDate() + 30)
+        paidUntil = dayKey(d)
+        setPaid(paidUntil)
+      }
+      await updateShop(shop.shop_id, { status, paid_until: paidUntil, notes })
       await onChanged()
     } catch (e) {
       setErr(e.message)

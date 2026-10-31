@@ -12,8 +12,14 @@ export default function Suspended({ reason }) {
     setBusy(true)
     const r = await syncNow()
     setBusy(false)
-    if (r.reason === 'suspended' || r.reason === 'expired') {
-      setMsg('Your account is still not active.')
+    if (r.reason === 'suspended') {
+      setMsg('Your account is still suspended. Please contact support.')
+    } else if (r.reason === 'expired') {
+      setMsg('Your access period has ended. Ask support to extend your paid-until date.')
+    } else if (r.reason === 'not-logged-in') {
+      setMsg('Your login has expired. Clear this site\'s data in Chrome settings and log in again.')
+    } else if (!r.ok) {
+      setMsg(r.error || 'Could not check right now. Try again in a moment.')
     }
   }
 
